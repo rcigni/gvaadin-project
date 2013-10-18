@@ -1,9 +1,11 @@
 package com.bytecode.vaadin.builder
 
 import com.bytecode.vaadin.builder.factory.ComponentContainerFactory
+import com.bytecode.vaadin.builder.factory.EventListenerFactory
 import com.bytecode.vaadin.builder.factory.LeafComponentFactory
 import com.bytecode.vaadin.builder.factory.NamedComponentHandler
 import com.bytecode.vaadin.builder.factory.SingleComponentFactory
+import com.vaadin.event.FieldEvents
 import com.vaadin.ui.*
 
 /**
@@ -37,6 +39,11 @@ public class VaadinBuilder extends FactoryBuilderSupport implements NamedCompone
         // inputs
         registerFactory "textField", new LeafComponentFactory(TextField.class);
         registerFactory "textArea", new LeafComponentFactory(TextArea.class);
+
+        // events
+//        registerFactory("onClick", new EventListenerFactory(Button.ClickListener, "addClickListener"))
+//        registerFactory("onFocus", new EventListenerFactory(FieldEvents.FocusListener, "addFocusListener"))
+//        registerFactory("onBlur", new EventListenerFactory(FieldEvents.BlurListener, "addBlurListener"))
 
     }
 

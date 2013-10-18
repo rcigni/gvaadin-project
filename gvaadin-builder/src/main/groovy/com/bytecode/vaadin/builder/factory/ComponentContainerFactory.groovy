@@ -12,17 +12,19 @@ import com.vaadin.ui.ComponentContainer
  */
 class ComponentContainerFactory extends NamedComponentFactory {
 
-    Class componentContainerClass
+    Class clazz
 
     ComponentContainerFactory(Class component) {
         assert ComponentContainer.class.isAssignableFrom(component)
-        componentContainerClass = component
+        clazz = component
     }
 
     @Override
     Component newInstance(FactoryBuilderSupport builder, Object name, Map attributes) throws InstantiationException, IllegalAccessException {
-        componentContainerClass.newInstance();
+        clazz.newInstance();
     }
+
+
 
     @Override
     boolean isLeaf() {false}
