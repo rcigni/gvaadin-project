@@ -1,0 +1,10 @@
+#intellij
+atlassian-ide-plugin.xml
+.idea
+*iml
+
+#mvn
+target
+
+#vaadin
+gvaadin-app/src/main/webapp/VAADIN
