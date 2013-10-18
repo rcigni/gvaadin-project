@@ -1,9 +1,10 @@
 package com.bytecode.vaadin.builder
 
-import com.bytecode.vaadin.builder.factory.ButtonFactory
 import com.bytecode.vaadin.builder.factory.ComponentContainerFactory
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.VerticalLayout
+import com.bytecode.vaadin.builder.factory.LeafComponentFactory
+import com.bytecode.vaadin.builder.factory.NamedComponentHandler
+import com.bytecode.vaadin.builder.factory.SingleComponentFactory
+import com.vaadin.ui.*
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,17 +13,40 @@ import com.vaadin.ui.VerticalLayout
  * Time: 11:43 AM
  * To change this template use File | Settings | File Templates.
  */
-public class VaadinBuilder extends FactoryBuilderSupport {
+public class VaadinBuilder extends FactoryBuilderSupport implements NamedComponentHandler {
 
-    public VaadinBuilder(init = true) {
+    def registry = [:]
+
+    public VaadinBuilder(boolean init = true) {
         super(init);
         registerFactories();
     }
 
     private void registerFactories() {
+
+        // layouts
         registerFactory "verticalLayout", new ComponentContainerFactory(VerticalLayout.class);
         registerFactory "horizontalLayout", new ComponentContainerFactory(HorizontalLayout.class);
-        registerFactory "button", new ButtonFactory();
+
+        registerFactory "panel", new SingleComponentFactory(Panel.class);
+
+        // simple leafs
+        registerFactory "button", new LeafComponentFactory(Button.class);
+        registerFactory "label", new LeafComponentFactory(Label.class);
+
+        // inputs
+        registerFactory "textField", new LeafComponentFactory(TextField.class);
+        registerFactory "textArea", new LeafComponentFactory(TextArea.class);
+
+    }
+
+    @Override
+    void notify(String name, Component component) {
+        if (registry.containsKey(name)) {
+            throw new IllegalStateException("The name '${name}' has been used by ${registry[name]} component");
+        } else {
+            registry[name] = component
+        }
     }
 
 }

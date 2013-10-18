@@ -1,8 +1,6 @@
 package com.bytecode.vaadin.builder
 
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComponentContainer
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import org.junit.Test
 
 /**
@@ -12,24 +10,41 @@ import org.junit.Test
  * Time: 11:11 AM
  * To change this template use File | Settings | File Templates.
  */
-class VaadinBuilderTest {
+class VaadinBuilderTest extends GroovyTestCase{
 
     @Test
     public void testBuilder1() {
 
-
-
         def builder = new VaadinBuilder();
 
         def view = builder.verticalLayout {
+            label(caption: 'label')
             button(caption: "click me")
-            button(caption: 'and me')
+            button('luigi', caption: 'luigi caption')
         }
 
         assert view instanceof VerticalLayout
-        def expectButton = view.iterator()[0]
-        assert expectButton instanceof Button
-        assert expectButton.caption == 'click me'
+        def expectLabel = view.iterator()[0]
+        assert expectLabel instanceof Label
+        assert expectLabel.caption == 'label'
         assert view.iterator()[1].caption == 'click me'
+
+        builder.registry.size() == 1
+        builder.registry.luigi.caption == 'luigi caption'
+    }
+
+    @Test
+    public void testBuilderDoubleName() {
+
+        def builder = new VaadinBuilder();
+
+        shouldFail(RuntimeException) {
+            builder.verticalLayout {
+                button('luigi', caption: 'luigi1')
+                button('luigi', caption: 'luigi2')
+            }
+        }
+
+
     }
 }
