@@ -18,7 +18,7 @@ class VaadinBuilderTest extends GroovyTestCase{
         def builder = new VaadinBuilder();
 
         def view = builder.verticalLayout {
-            label(caption: 'label')
+            label(value: 'label')
             button(caption: "click me")
             button('luigi', caption: 'luigi caption')
         }
@@ -26,11 +26,11 @@ class VaadinBuilderTest extends GroovyTestCase{
         assert view instanceof VerticalLayout
         def expectLabel = view.iterator()[0]
         assert expectLabel instanceof Label
-        assert expectLabel.caption == 'label'
+        assert expectLabel.value == 'label'
         assert view.iterator()[1].caption == 'click me'
 
-        builder.registry.size() == 1
-        builder.registry.luigi.caption == 'luigi caption'
+        assert builder.registry.size() == 1
+        assert builder.registry.luigi.caption == 'luigi caption'
     }
 
     @Test
