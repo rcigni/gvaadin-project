@@ -15,8 +15,8 @@
   </properties>
 
   <modules>
-    <module>gvaadin-app</module>
-    <module>gvaadin-builder</module>
+      <module>gvaadin-builder</module>
+      <module>gvaadin-app</module>
   </modules>
 
 </project>

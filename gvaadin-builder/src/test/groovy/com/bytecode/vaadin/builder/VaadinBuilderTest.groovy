@@ -34,6 +34,32 @@ class VaadinBuilderTest extends GroovyTestCase{
     }
 
     @Test
+    public void testPanels() {
+
+        def builder = new VaadinBuilder();
+
+        def view = builder.panel {
+            verticalLayout {
+                horizontalLayout()
+                horizontalLayout()
+                horizontalLayout()
+            }
+        }
+
+    }
+
+    @Test
+    public void testClick() {
+
+        def builder = new VaadinBuilder();
+
+        def view = builder.verticalLayout {
+            button('click1')
+        }
+
+    }
+
+    @Test
     public void testBuilderDoubleName() {
 
         def builder = new VaadinBuilder();
