@@ -10,7 +10,7 @@ import com.vaadin.ui.ComponentContainer
  * Time: 11:44 AM
  * To change this template use File | Settings | File Templates.
  */
-class ComponentContainerFactory extends NamedComponentFactory {
+class ComponentContainerFactory extends AbstractFactory {
 
     Class clazz
 
@@ -20,16 +20,17 @@ class ComponentContainerFactory extends NamedComponentFactory {
     }
 
     @Override
-    Component newInstance(FactoryBuilderSupport builder, Object name, Map attributes) throws InstantiationException, IllegalAccessException {
-        clazz.newInstance();
+    boolean onNodeChildren(FactoryBuilderSupport builder, Object node, Closure childContent) {
+        return super.onNodeChildren(builder, node, childContent)
     }
 
-
-
-    @Override
     boolean isLeaf() {false}
 
     @Override
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) throws InstantiationException, IllegalAccessException {
+        clazz.newInstance();
+    }
+
     void setChild(FactoryBuilderSupport builder, Object parent, Object child) {
         parent.addComponent child
     }

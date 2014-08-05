@@ -10,7 +10,7 @@ import com.vaadin.ui.Label
  * Time: 1:24 PM
  * To change this template use File | Settings | File Templates.
  */
-class LeafComponentFactory extends NamedComponentFactory {
+class LeafComponentFactory extends AbstractFactory {
 
     Class clazz
 
@@ -23,7 +23,7 @@ class LeafComponentFactory extends NamedComponentFactory {
     boolean isLeaf() {true}
 
     @Override
-    Component newInstance(FactoryBuilderSupport builder, Object name, Map attributes) throws InstantiationException, IllegalAccessException {
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) throws InstantiationException, IllegalAccessException {
         clazz.newInstance()
     }
 }

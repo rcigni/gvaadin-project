@@ -1,6 +1,5 @@
 package com.bytecode.vaadin.builder.factory
 
-import com.vaadin.ui.Component
 import com.vaadin.ui.SingleComponentContainer
 
 /**
@@ -10,7 +9,7 @@ import com.vaadin.ui.SingleComponentContainer
  * Time: 2:02 PM
  * To change this template use File | Settings | File Templates.
  */
-class SingleComponentFactory extends NamedComponentFactory {
+class SingleComponentFactory extends AbstractFactory {
 
     Class clazz
 
@@ -20,12 +19,13 @@ class SingleComponentFactory extends NamedComponentFactory {
     }
 
     @Override
-    Component newInstance(FactoryBuilderSupport builder, Object name, Map attributes) throws InstantiationException, IllegalAccessException {
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) throws InstantiationException, IllegalAccessException {
         clazz.newInstance()
     }
 
     @Override
     boolean isLeaf() {false}
+
 
     @Override
     void setChild(FactoryBuilderSupport builder, Object parent, Object child) {

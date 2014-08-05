@@ -1,59 +1,113 @@
 package com.bytecode.vaadin.builder
 
+import com.bytecode.vaadin.builder.factory.ActionPerformComponentFactory
 import com.bytecode.vaadin.builder.factory.ComponentContainerFactory
-import com.bytecode.vaadin.builder.factory.EventListenerFactory
 import com.bytecode.vaadin.builder.factory.LeafComponentFactory
-import com.bytecode.vaadin.builder.factory.NamedComponentHandler
 import com.bytecode.vaadin.builder.factory.SingleComponentFactory
-import com.vaadin.event.FieldEvents
-import com.vaadin.ui.*
+import com.vaadin.ui.Button
+import com.vaadin.ui.FormLayout
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.VerticalLayout
+
+import java.util.logging.Logger
+
+import groovy.swing.factory.MapFactory
+import groovy.swing.factory.CollectionFactory
 
 /**
- * Created with IntelliJ IDEA.
- * User: rcigni
- * Date: 10/18/13
- * Time: 11:43 AM
- * To change this template use File | Settings | File Templates.
+ * A helper class for creating Swing widgets using GroovyMarkup
  */
-public class VaadinBuilder extends FactoryBuilderSupport implements NamedComponentHandler {
+public class VaadinBuilder extends FactoryBuilderSupport {
 
-    def registry = [:]
+    private static final Logger LOG = Logger.getLogger(VaadinBuilder.name)
+
+    public static final String DELEGATE_PROPERTY_OBJECT_ID = "_delegateProperty:id";
+    public static final String DEFAULT_DELEGATE_PROPERTY_OBJECT_ID = "id";
 
     public VaadinBuilder(boolean init = true) {
-        super(init);
-        registerFactories();
+        super(init)
+        this[DELEGATE_PROPERTY_OBJECT_ID] = DEFAULT_DELEGATE_PROPERTY_OBJECT_ID
     }
 
-    private void registerFactories() {
+    public static objectIDAttributeDelegate(def builder, def node, def attributes) {
+        def idAttr = builder.getAt(DELEGATE_PROPERTY_OBJECT_ID) ?: DEFAULT_DELEGATE_PROPERTY_OBJECT_ID
+        def theID = attributes.remove(idAttr)
+        if (theID) {
+            builder.setVariable(theID, node)
+            if(node) {
+                try {
+                    if (!node.name) node.name = theID
+                } catch (MissingPropertyException mpe) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    def registerBasic() {
 
         // layouts
         registerFactory "verticalLayout", new ComponentContainerFactory(VerticalLayout.class);
         registerFactory "horizontalLayout", new ComponentContainerFactory(HorizontalLayout.class);
+        registerFactory("gridLayout", new ComponentContainerFactory(com.vaadin.ui.GridLayout.class))
 
-        registerFactory "panel", new SingleComponentFactory(Panel.class);
+        registerFactory("formLayout", new ComponentContainerFactory(FormLayout.class))
+
+        registerFactory "panel", new SingleComponentFactory(com.vaadin.ui.Panel.class);
 
         // simple leafs
-        registerFactory "button", new LeafComponentFactory(Button.class);
-        registerFactory "label", new LeafComponentFactory(Label.class);
+        registerFactory "label", new LeafComponentFactory(com.vaadin.ui.Label.class);
 
         // inputs
-        registerFactory "textField", new LeafComponentFactory(TextField.class);
-        registerFactory "textArea", new LeafComponentFactory(TextArea.class);
+        registerFactory "textField", new LeafComponentFactory(com.vaadin.ui.TextField.class);
+        registerFactory "textArea", new LeafComponentFactory(com.vaadin.ui.TextArea.class);
 
-        // events
-//        registerFactory("onClick", new EventListenerFactory(Button.ClickListener, "addClickListener"))
-//        registerFactory("onFocus", new EventListenerFactory(FieldEvents.FocusListener, "addFocusListener"))
-//        registerFactory("onBlur", new EventListenerFactory(FieldEvents.BlurListener, "addBlurListener"))
+        registerFactory("actions", new CollectionFactory())
+        registerFactory("map", new MapFactory())
 
+        //object id delegate, for propertyNotFound
+        addAttributeDelegate(VaadinBuilder.&objectIDAttributeDelegate)
+
+        registerFactory("noparent", new CollectionFactory())
+
+        //def todos = [:]
+
+//        addPostInstantiateDelegate {FactoryBuilderSupport builder, def attributes, def node->
+//            def er = attributes.remove('expandRatio')
+//            println "PRE " + builder.current
+//            if (er != null) {
+//                if (!builder.context.expandRatio) {
+//                    builder.context.expandRatio = [:]
+//                }
+//                builder.context.expandRatio[node] = er
+//            }
+//        }
+
+//        addPostNodeCompletionDelegate {builder, parent, node->
+//            def expandRatio = builder.context.expandRatio
+//            println "POST " + builder.current
+//            if (expandRatio) {
+//                parent.setExpandRatio(node, expandRatio[node])
+//            }
+//        }
     }
 
-    @Override
-    void notify(String name, Component component) {
-        if (registry.containsKey(name)) {
-            throw new IllegalStateException("The name '${name}' has been used by ${registry[name]} component");
-        } else {
-            registry[name] = component
-        }
+
+
+    def registerActionPerformer() {
+        def actionPerformComponentFactory = new ActionPerformComponentFactory(Button.class)
+        registerFactory "button", actionPerformComponentFactory;
+        //registerExplicitMethod("on", actionPerformComponentFactory.&onAction)
     }
 
+
+    /**
+     * Compatibility API.
+     *
+     * @param c run this closure in the builder
+     */
+    public Object build(Closure c) {
+        c.setDelegate(this)
+        return c.call()
+    }
 }

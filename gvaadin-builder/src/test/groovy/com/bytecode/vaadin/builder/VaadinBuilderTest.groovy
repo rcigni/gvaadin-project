@@ -1,6 +1,8 @@
 package com.bytecode.vaadin.builder
 
+import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.ui.*
+import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.junit.Test
 
 /**
@@ -17,10 +19,21 @@ class VaadinBuilderTest extends GroovyTestCase{
 
         def builder = new VaadinBuilder();
 
-        def view = builder.verticalLayout {
+        def view = builder.verticalLayout(id: 'outher') {
             label(value: 'label')
             button(caption: "click me")
-            button('luigi', caption: 'luigi caption')
+
+            shouldFail {
+                assert inner
+            }
+
+            verticalLayout(id: 'inner') {
+                assert inner
+                assert outher
+            }
+
+            assert inner
+            assert outher
         }
 
         assert view instanceof VerticalLayout
@@ -29,48 +42,40 @@ class VaadinBuilderTest extends GroovyTestCase{
         assert expectLabel.value == 'label'
         assert view.iterator()[1].caption == 'click me'
 
-        assert builder.registry.size() == 1
-        assert builder.registry.luigi.caption == 'luigi caption'
     }
 
     @Test
-    public void testPanels() {
+    public void testBuilderExpand() {
 
         def builder = new VaadinBuilder();
+        def v0, v1, v2
 
-        def view = builder.panel {
-            verticalLayout {
-                horizontalLayout()
-                horizontalLayout()
-                horizontalLayout()
-            }
+        def view = builder.verticalLayout() {
+            v0 = button(caption: "click me")
+            v1 = button(caption: "click me", expandRatio: 10f)
+            v2 = button(caption: "click me")
+
+        }
+        assert view.getExpandRatio(v0) == 0f
+        assert view.getExpandRatio(v1) == 10f
+        assert view.getExpandRatio(v2) == 0f
+    }
+
+
+    @Test
+    public void testMargins() {
+
+        VerticalLayout layout = new VaadinBuilder().verticalLayout(margin: new MarginInfo(true));
+        assertTrueMargin(layout.margin)
+
+        shouldFail(GroovyCastException.class) {
+            new VaadinBuilder().verticalLayout(margin: true);
         }
 
     }
 
-    @Test
-    public void testClick() {
-
-        def builder = new VaadinBuilder();
-
-        def view = builder.verticalLayout {
-            button('click1')
-        }
-
+    static assertTrueMargin(MarginInfo mi) {
+        assert mi.hasLeft() && mi.hasRight() && mi.hasTop() && mi.hasBottom()
     }
 
-    @Test
-    public void testBuilderDoubleName() {
-
-        def builder = new VaadinBuilder();
-
-        shouldFail(RuntimeException) {
-            builder.verticalLayout {
-                button('luigi', caption: 'luigi1')
-                button('luigi', caption: 'luigi2')
-            }
-        }
-
-
-    }
 }
