@@ -3,6 +3,7 @@ package com.bytecode.vaadin.builder
 import com.bytecode.vaadin.builder.factory.ActionPerformComponentFactory
 import com.bytecode.vaadin.builder.factory.ComponentContainerFactory
 import com.bytecode.vaadin.builder.factory.LeafComponentFactory
+import com.bytecode.vaadin.builder.factory.OrderedComponentContainerFactory
 import com.bytecode.vaadin.builder.factory.SingleComponentFactory
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
@@ -24,12 +25,14 @@ public class VaadinBuilder extends FactoryBuilderSupport {
     public static final String DELEGATE_PROPERTY_OBJECT_ID = "_delegateProperty:id";
     public static final String DEFAULT_DELEGATE_PROPERTY_OBJECT_ID = "id";
 
+    Map namedComponents = [:]
+
     public VaadinBuilder(boolean init = true) {
         super(init)
         this[DELEGATE_PROPERTY_OBJECT_ID] = DEFAULT_DELEGATE_PROPERTY_OBJECT_ID
     }
 
-    public static objectIDAttributeDelegate(def builder, def node, def attributes) {
+    public objectIDAttributeDelegate(def builder, def node, def attributes) {
         def idAttr = builder.getAt(DELEGATE_PROPERTY_OBJECT_ID) ?: DEFAULT_DELEGATE_PROPERTY_OBJECT_ID
         def theID = attributes.remove(idAttr)
         if (theID) {
@@ -47,49 +50,25 @@ public class VaadinBuilder extends FactoryBuilderSupport {
     def registerBasic() {
 
         // layouts
-        registerFactory "verticalLayout", new ComponentContainerFactory(VerticalLayout.class);
-        registerFactory "horizontalLayout", new ComponentContainerFactory(HorizontalLayout.class);
+        registerFactory "verticalLayout", new OrderedComponentContainerFactory(VerticalLayout.class);
+        registerFactory "horizontalLayout", new OrderedComponentContainerFactory(HorizontalLayout.class);
+        registerFactory("formLayout", new OrderedComponentContainerFactory(FormLayout.class))
+        addAttributeDelegate OrderedComponentContainerFactory.&onAttributeDelegate
+
         registerFactory("gridLayout", new ComponentContainerFactory(com.vaadin.ui.GridLayout.class))
-
-        registerFactory("formLayout", new ComponentContainerFactory(FormLayout.class))
-
         registerFactory "panel", new SingleComponentFactory(com.vaadin.ui.Panel.class);
 
         // simple leafs
         registerFactory "label", new LeafComponentFactory(com.vaadin.ui.Label.class);
-
         // inputs
         registerFactory "textField", new LeafComponentFactory(com.vaadin.ui.TextField.class);
         registerFactory "textArea", new LeafComponentFactory(com.vaadin.ui.TextArea.class);
-
         registerFactory("actions", new CollectionFactory())
         registerFactory("map", new MapFactory())
-
         //object id delegate, for propertyNotFound
-        addAttributeDelegate(VaadinBuilder.&objectIDAttributeDelegate)
-
+        addAttributeDelegate this.&objectIDAttributeDelegate
         registerFactory("noparent", new CollectionFactory())
 
-        //def todos = [:]
-
-//        addPostInstantiateDelegate {FactoryBuilderSupport builder, def attributes, def node->
-//            def er = attributes.remove('expandRatio')
-//            println "PRE " + builder.current
-//            if (er != null) {
-//                if (!builder.context.expandRatio) {
-//                    builder.context.expandRatio = [:]
-//                }
-//                builder.context.expandRatio[node] = er
-//            }
-//        }
-
-//        addPostNodeCompletionDelegate {builder, parent, node->
-//            def expandRatio = builder.context.expandRatio
-//            println "POST " + builder.current
-//            if (expandRatio) {
-//                parent.setExpandRatio(node, expandRatio[node])
-//            }
-//        }
     }
 
 

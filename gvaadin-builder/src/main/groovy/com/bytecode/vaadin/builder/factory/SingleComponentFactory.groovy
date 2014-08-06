@@ -3,11 +3,7 @@ package com.bytecode.vaadin.builder.factory
 import com.vaadin.ui.SingleComponentContainer
 
 /**
- * Created with IntelliJ IDEA.
  * User: rcigni
- * Date: 10/18/13
- * Time: 2:02 PM
- * To change this template use File | Settings | File Templates.
  */
 class SingleComponentFactory extends AbstractFactory {
 

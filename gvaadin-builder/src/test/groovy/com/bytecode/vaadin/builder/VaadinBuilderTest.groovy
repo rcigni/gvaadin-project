@@ -15,7 +15,7 @@ import org.junit.Test
 class VaadinBuilderTest extends GroovyTestCase{
 
     @Test
-    public void testBuilder1() {
+    public void testValiables() {
 
         def builder = new VaadinBuilder();
 
@@ -36,6 +36,8 @@ class VaadinBuilderTest extends GroovyTestCase{
             assert outher
         }
 
+        assert ['inner', 'outher'].every {builder.variables.containsKey(it)}
+
         assert view instanceof VerticalLayout
         def expectLabel = view.iterator()[0]
         assert expectLabel instanceof Label
@@ -48,17 +50,24 @@ class VaadinBuilderTest extends GroovyTestCase{
     public void testBuilderExpand() {
 
         def builder = new VaadinBuilder();
-        def v0, v1, v2
+        def v0, v1, v2, v3, v4
 
         def view = builder.verticalLayout() {
             v0 = button(caption: "click me")
             v1 = button(caption: "click me", expandRatio: 10f)
             v2 = button(caption: "click me")
+            v3 = button(caption: "click me", expandRatio: 12f)
+            v4 = button(caption: "click me")
 
         }
+
+        assert v1 instanceof Button
+
         assert view.getExpandRatio(v0) == 0f
         assert view.getExpandRatio(v1) == 10f
         assert view.getExpandRatio(v2) == 0f
+        assert view.getExpandRatio(v3) == 12f
+        assert view.getExpandRatio(v4) == 0f
     }
 
 
