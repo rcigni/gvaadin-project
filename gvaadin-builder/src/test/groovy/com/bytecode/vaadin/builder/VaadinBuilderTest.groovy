@@ -6,11 +6,7 @@ import org.codehaus.groovy.runtime.typehandling.GroovyCastException
 import org.junit.Test
 
 /**
- * Created with IntelliJ IDEA.
  * User: rcigni
- * Date: 10/18/13
- * Time: 11:11 AM
- * To change this template use File | Settings | File Templates.
  */
 class VaadinBuilderTest extends GroovyTestCase{
 

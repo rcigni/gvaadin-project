@@ -6,11 +6,7 @@ import com.vaadin.ui.Component
 import com.vaadin.ui.Label
 
 /**
- * Created with IntelliJ IDEA.
  * User: rcigni
- * Date: 10/20/13
- * Time: 5:59 PM
- * To change this template use File | Settings | File Templates.
  */
 class ExampleView {
 
@@ -19,10 +15,10 @@ class ExampleView {
         VaadinBuilder builder = new VaadinBuilder();
 
         Component layout = builder.verticalLayout(margin: true) {
-            button('click', caption: "Click Me!")
+            button(id: 'click', caption: "example.click")
         }
 
-        builder.registry.click.addClickListener = {event ->
+        builder.variables.click.addClickListener = {event ->
             layout.addComponent(new Label("Thank you for clicking"));
         } as Button.ClickListener
 

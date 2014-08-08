@@ -25,8 +25,6 @@ public class VaadinBuilder extends FactoryBuilderSupport {
     public static final String DELEGATE_PROPERTY_OBJECT_ID = "_delegateProperty:id";
     public static final String DEFAULT_DELEGATE_PROPERTY_OBJECT_ID = "id";
 
-    Map namedComponents = [:]
-
     public VaadinBuilder(boolean init = true) {
         super(init)
         this[DELEGATE_PROPERTY_OBJECT_ID] = DEFAULT_DELEGATE_PROPERTY_OBJECT_ID
@@ -63,6 +61,7 @@ public class VaadinBuilder extends FactoryBuilderSupport {
         // inputs
         registerFactory "textField", new LeafComponentFactory(com.vaadin.ui.TextField.class);
         registerFactory "textArea", new LeafComponentFactory(com.vaadin.ui.TextArea.class);
+
         registerFactory("actions", new CollectionFactory())
         registerFactory("map", new MapFactory())
         //object id delegate, for propertyNotFound
